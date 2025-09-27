@@ -1,18 +1,14 @@
 <?php
-require("DBHandler.php");
-
-$dbhandler = new DBHandler();
-
-var_dump($_POST);
+session_start();
+require_once("LogicHandler.php");
+$logichandler = new LogicHandler();
+$logichandler -> LogoutGuard();
 
 if (isset($_POST["RegisterReq"])) {
-    $name = $_POST["Name"];
-    $surname = $_POST["Surname"];
-
-    echo "here";
-
-    $dbhandler->register_candidate($name, $surname);
+   
     unset($_POST["RegisterReq"]);
+    $logichandler -> registerCanidate();
+    
 }
 
 ?>
@@ -32,10 +28,13 @@ if (isset($_POST["RegisterReq"])) {
 
     <section style="width: 300px; height: 300px; margin-left: auto; margin-right: auto;margin: auto; background-color: cadetblue; border: 10px solid; border-color:darkcyan; border-radius: 10px; text-align:center;">
         <form action="" method="post">
-            <input type="text" name="Name" id="" style="margin-top: 31px;" required><br>
-            <input type="text" name="Surname" id="" style="margin-top: 10px;" required><br>
+            <input type="text" name="inputName" id="" style="margin-top: 31px;" required><br>
+            <input type="text" name="inputSurname" id="" style="margin-top: 10px;" required><br>
             <input type="submit" value="Register" style="margin-top: 10px;" name="RegisterReq">
         </form>
+
+        <a href="/index.php"><button>Main menu</button></a>
+
     </section>
 
 

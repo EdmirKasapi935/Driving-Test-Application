@@ -1,3 +1,20 @@
+<?php
+session_start();
+require_once("LogicHandler.php");
+$logichandler = new LogicHandler();
+$logichandler -> LogoutGuard();
+
+
+
+if(isset($_POST["LoginReq"]))
+{
+    unset($_POST["LoginReq"]);
+    $logichandler -> login($_POST["toLogin"]);
+    
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,12 +25,11 @@
 </head>
 
 <body>
-    <form action="mainmenu.php" method="post">
-        <select name="cars" id="cars" name="toLogin">
-            <option value="volvo">Volvo</option>
-            <option value="saab">Saab</option>
-            <option value="mercedes">Mercedes</option>
-            <option value="audi">Audi</option>
+    <form action="" method="post">
+        <select id="cars" name="toLogin">
+            <?php
+            $logichandler -> renderCandidateOptions();
+            ?>
         </select>
         <br>
         <input type="submit" value="Log in" name="LoginReq">
@@ -26,3 +42,8 @@
 </body>
 
 </html>
+<script>
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+</script>

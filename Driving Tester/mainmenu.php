@@ -22,6 +22,10 @@ if(isset($_POST["LogoutReq"]))
 <body>
     <h1>Main Menu</h1>
 
+    <?php
+    
+    ?>
+
     <form action="" method="post">
         <input type="hidden" name="LogoutToken" value="<?php echo $_SESSION["token"]; ?>">
         <input type="submit" name="LogoutReq" value="Log Out">

@@ -54,6 +54,15 @@ class DBHandler{
         return $candidate;
     }
 
+    function getCategories($level)
+    {
+        $query = "SELECT * FROM Categories WHERE C_Level = '$level'";
+        $statement = $this -> pdo -> query($query);
+        $categories = $statement -> fetchAll(PDO::FETCH_ASSOC);
+
+        return $categories;
+    }
+
     private function checkNull(...$params)
     {
         foreach($params as $param)
@@ -66,6 +75,8 @@ class DBHandler{
 
         return false;
     }
+
+    
 
 }
 

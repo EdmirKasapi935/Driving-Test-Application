@@ -27,11 +27,39 @@ class LogicHandler
             }
     }
 
-    private function generateUserKey()
+    function getAExamCategories()
     {
-        $_SESSION["token"] = uniqid();
+        $a = $this -> dbhandler -> getCategories("A");
+        $shared = $this -> dbhandler -> getCategories("Shared");
+        return array_merge($a, $shared);
     }
 
+    function getBExamCategories()
+    {
+        $b =  $this -> dbhandler -> getCategories("B");
+        $shared = $this -> dbhandler -> getCategories("Shared");
+        return array_merge($b, $shared);
+    }
+
+    function getB2ExamCategories()
+    {
+        $b2 = $this -> dbhandler -> getCategories("B2");
+        $shared = $this -> dbhandler -> getCategories("Shared");
+        return array_merge($b2, $shared);
+    }
+
+    function getBehavioralCategories()
+    {
+        return $this -> dbhandler -> getCategories("Behavioral");
+    }
+
+    function getSharedCategories()
+    {
+        return $this -> dbhandler -> getCategories("Shared");
+    }
+
+   
+    
     function login($id)
     {
        $candidate = $this -> dbhandler -> getCandidateInfo($id);
@@ -64,6 +92,12 @@ class LogicHandler
           echo "<script> window.location.replace('mainmenu.php') </script>";
       }
     }
+
+    private function generateUserKey()
+    {
+        $_SESSION["token"] = uniqid();
+    }
+
 
    
 

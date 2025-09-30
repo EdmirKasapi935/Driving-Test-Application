@@ -3,6 +3,13 @@
 class DBHandler{
 
     private $pdo;
+    private $levels = array(
+        "A" => 1,
+        "B" => 2,
+        "B2" => 3,
+        "Behavioral" => 4,
+        "Shared" => 5
+    );
 
     function __construct()
     {
@@ -54,9 +61,11 @@ class DBHandler{
         return $candidate;
     }
 
-    function getCategories($level)
+    function getCategories($levelinput)
     {
-        $query = "SELECT * FROM Categories WHERE C_Level = '$level'";
+        $level = $this -> levels[$levelinput];
+
+        $query = "SELECT * FROM Categories WHERE L_ID = $level";
         $statement = $this -> pdo -> query($query);
         $categories = $statement -> fetchAll(PDO::FETCH_ASSOC);
 

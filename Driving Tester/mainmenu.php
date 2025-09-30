@@ -23,7 +23,9 @@ if(isset($_POST["LogoutReq"]))
     <h1>Main Menu</h1>
 
     <?php
-    
+     
+     
+
     ?>
 
     <form action="" method="post">

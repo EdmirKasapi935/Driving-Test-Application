@@ -10,7 +10,6 @@ if(isset($_POST["LogoutReq"]))
     $logichandler -> logOut($_POST["LogoutToken"]);
 }
 
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,12 +21,15 @@ if(isset($_POST["LogoutReq"]))
 <body>
     <h1>Main Menu</h1>
 
-    <?php
-     
-     $a = $logichandler -> getAExamQuestions();
-     var_dump($a);
-
-    ?>
+    <form action="generateTest.php" method="post">
+        <select name="ExamType" id="" required>
+            <option value="A">A Category -- Motorcycles & Mopeds</option>
+            <option value="B">B Category -- Passenger Cars</option>
+            <option value="B2">B2 Category -- Light Trucks / Vans</option>
+            <option value="Behavioral">Behavior exam</option>
+        </select>
+        <input type="submit" value="Generate & Start test" name="TypeSubmission">
+    </form>
 
     <form action="" method="post">
         <input type="hidden" name="LogoutToken" value="<?php echo $_SESSION["token"]; ?>">

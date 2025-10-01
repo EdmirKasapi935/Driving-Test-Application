@@ -27,33 +27,48 @@ class LogicHandler
             }
     }
 
-    function getAExamCategories()
+
+    function getAExamQuestions()
+    {
+        $categories = array_merge($this -> getACategories(), $this -> getSharedCategories());
+        
+        $questions_list = array(); // empty array
+
+        foreach($categories as $category)
+        {
+          $q = $this -> dbhandler -> getCategoryQuestions($category["C_ID"]);
+          $questions_list += $q; 
+        }
+
+        return $questions_list;
+    }
+    
+
+    private function getACategories()
     {
         $a = $this -> dbhandler -> getCategories("A");
-        $shared = $this -> dbhandler -> getCategories("Shared");
-        return array_merge($a, $shared);
+        return $a;
     }
 
-    function getBExamCategories()
+    private function getBCategories()
     {
         $b =  $this -> dbhandler -> getCategories("B");
-        $shared = $this -> dbhandler -> getCategories("Shared");
-        return array_merge($b, $shared);
+        
+        return $b;
     }
 
-    function getB2ExamCategories()
+    private function getB2Categories()
     {
         $b2 = $this -> dbhandler -> getCategories("B2");
-        $shared = $this -> dbhandler -> getCategories("Shared");
-        return array_merge($b2, $shared);
+        return $b2;
     }
 
-    function getBehavioralCategories()
+    private function getBehavioralCategories()
     {
         return $this -> dbhandler -> getCategories("Behavioral");
     }
 
-    function getSharedCategories()
+    private function getSharedCategories()
     {
         return $this -> dbhandler -> getCategories("Shared");
     }

@@ -24,7 +24,8 @@ if(isset($_POST["LogoutReq"]))
 
     <?php
      
-     
+     $a = $logichandler -> getAExamQuestions();
+     var_dump($a);
 
     ?>
 

@@ -72,6 +72,15 @@ class DBHandler{
         return $categories;
     }
 
+    function getCategoryQuestions($input)
+    {
+        $query = "SELECT * FROM Questions WHERE C_ID =".$input;
+        $statement = $this -> pdo -> query($query);
+        $questions = $statement -> fetchAll(PDO::FETCH_ASSOC);
+
+        return $questions;
+    }
+
     private function checkNull(...$params)
     {
         foreach($params as $param)

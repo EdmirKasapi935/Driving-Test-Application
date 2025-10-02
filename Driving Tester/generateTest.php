@@ -23,8 +23,12 @@ if(isset($_POST["TypeSubmission"])) {
             break;
     }
 
+    $_SESSION["Current"] = 0;
+
     unset($_POST["TypeSubmission"]);
     unset($_POST["ExamType"]);
+
+    $_SESSION["Responses"] = array(); //empty array;
 
     echo "<script> window.location.replace('testPage.php'); </script>";
 }

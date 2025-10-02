@@ -3,6 +3,23 @@ session_start();
 require_once("LogicHandler.php");
 $logichandler = new LogicHandler();
 $logichandler -> LoginGuard();
+
+if(isset($_POST["questionSwitch"]))
+{
+
+  $_SESSION["Current"] = $_POST["questionSwitch"] - 1;
+  unset($_POST["questionSwitch"]);
+
+}
+
+if(isset($_POST["responseSubmission"]))
+{
+  $_SESSION["Responses"][$_SESSION["Current"]] = $_POST["questionResponse"];
+  unset($_POST["responseSubmission"]);
+}
+
+var_dump($_SESSION["Responses"]);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,19 +29,56 @@ $logichandler -> LoginGuard();
     <title>Document</title>
 </head>
 
+
+<div style="display: flex;">
+
 <?php
 
-$cnt = 1;
+$cnt = count($_SESSION["Questions"]);
 
-foreach($_SESSION["Questions"] as $question)
+$basicstyle = "margin: 2px;";
+$selectedstyle = $basicstyle." background-color: red;";
+
+for($i=0; $i<$cnt; $i++)
 {
-  echo ("<h3>".$cnt.".".$question["Q_String"]."  --  ".$question["C_ID"]."</h3>");
-  $cnt++;
+  $current_cnt = $i+1;
+
+  echo  "<form action='' method='post'>";
+  if($_SESSION["Current"] == $i )
+  {
+    echo  "<input type='submit' value=".$current_cnt." name='questionSwitch' style='".$selectedstyle."'>";
+  }
+  else
+  {
+     echo  "<input type='submit' value=".$current_cnt." name='questionSwitch' style='".$basicstyle."'>";
+  }
+  echo  "</form>";
 }
 
 ?>
 
+</div>
+
+<h2 style="margin-top: 25px"> <?php echo $_SESSION["Questions"][$_SESSION["Current"]]["Q_String"]; ?> </h2>
+
+
+<form action="" method="post">
+<input type="radio" name="questionResponse" id="" value="True" required> <label>True</label>
+<input type="radio" name="questionResponse" id="" value="False" required> <label>False</label> <br>
+<input type="submit" name="responseSubmission" value="Confirm">
+</form>
+
 <body>
-    
+
+<form action="testResult.php" method="post">
+  <input type="submit" value="FinishTest">
+</form>
+
 </body>
 </html>
+
+<script>
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+</script>

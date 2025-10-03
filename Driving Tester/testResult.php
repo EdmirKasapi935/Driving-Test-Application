@@ -4,25 +4,7 @@ require_once("LogicHandler.php");
 $logichandler = new LogicHandler();
 $logichandler->LoginGuard();
 
-$rightcnt = 0;
-$wrongcnt = 0;
-
-$questions = $_SESSION["Questions"];
-$responses = $_SESSION["Responses"];
-
-for ($i = 0; $i < count($questions); $i++) {
-
-    if (!isset($responses[$i])) {
-        $wrongcnt++;
-    } else {
-
-        if ($questions[$i]["Q_Answer"] != $responses[$i]) {
-            $wrongcnt++;
-        } else {
-            $rightcnt++;
-        }
-    }
-}
+$result = $logichandler ->evaluateTestResult($_SESSION["Questions"], $_SESSION["Responses"]);
 ?>
 
 <!DOCTYPE html>
@@ -36,8 +18,8 @@ for ($i = 0; $i < count($questions); $i++) {
 
 <body>
 
-    <h2><?php echo "Right Answers: " . $rightcnt; ?></h2>
-    <h2><?php echo "Wrong Answers: " . $wrongcnt; ?></h2>
+    <h2><?php echo "Right Answers: " . $result["Right"]; ?></h2>
+    <h2><?php echo "Wrong Answers: " . $result["Wrong"]; ?></h2>
 
 </body>
 

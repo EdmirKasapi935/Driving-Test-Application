@@ -10,6 +10,9 @@ class LogicHandler
         $this->dbhandler = new DBHandler();
     }
 
+
+    //User registration
+
     function registerCanidate()
     {
         $clear_name = filter_input(INPUT_POST, "inputName", FILTER_SANITIZE_SPECIAL_CHARS);
@@ -26,8 +29,8 @@ class LogicHandler
         }
     }
 
-
-    function getExamQuestionsA()
+    //exam quetions preparation
+    private function getExamQuestionsA()
     {
         $categories = array_merge($this->getACategories(), $this->getSharedCategories());
 
@@ -43,7 +46,7 @@ class LogicHandler
         return $questions_list;
     }
 
-    function getExamQuestionsB()
+    private function getExamQuestionsB()
     {
         $categories = array_merge($this->getBCategories(), $this->getSharedCategories());
 
@@ -59,7 +62,7 @@ class LogicHandler
         return $questions_list;
     }
 
-    function getExamQuestionsB2()
+    private function getExamQuestionsB2()
     {
         $categories = array_merge($this->getB2Categories(), $this->getSharedCategories());
 
@@ -75,7 +78,7 @@ class LogicHandler
         return $questions_list;
     }
 
-    function getExamQuestionsBehavioral()
+    private function getExamQuestionsBehavioral()
     {
         $categories = $this -> getBehavioralCategories();
 
@@ -90,7 +93,6 @@ class LogicHandler
 
         return $questions_list;
     }
-
 
     private function getACategories()
     {
@@ -126,7 +128,88 @@ class LogicHandler
         return array_splice($shared, 0, 3);
     }
 
+    //Test preparation and evaluation
+    function prepareTest($examReq)
+    {
+         switch ($examReq) {
+        case ("A"):
+            $_SESSION["Questions"] = $this -> getExamQuestionsA();
+            break;
+        case ("B"):
+            $_SESSION["Questions"] = $this -> getExamQuestionsB();
+            break;
+        case ("B2"):
+            $_SESSION["Questions"] = $this -> getExamQuestionsB2();
+            break;
+        case ("Behavioral"):
+            $_SESSION["Questions"] = $this -> getExamQuestionsBehavioral();
+            break;
+    }
 
+    $_SESSION["Current"] = 0;
+
+    unset($_POST["TypeSubmission"]);
+    unset($_POST["ExamType"]);
+
+    $_SESSION["Responses"] = array(); //empty array;
+    }
+
+    function renderTestNavButtons($questions, $responses)
+    {
+        $cnt = count($questions);
+
+        $buttonStyle = "";
+        $basicStyle = "margin: 2px;";
+        $currentstyle = $basicStyle." background-color: #c383faff;";
+        $unansweredStyle = $basicStyle."background-color:  #fb6e6eff;";
+        $answeredStyle = $basicStyle."background-color: #98FF98;";
+
+       
+        for($i = 0; $i < $cnt; $i++) {
+            $current_cnt = $i + 1;
+
+            if ($_SESSION["Current"] == $i) {
+               $buttonStyle = $currentstyle;
+            } else {
+                if (array_key_exists($i, $responses)) {
+                    $buttonStyle = $answeredStyle;
+                } else {
+                    $buttonStyle = $unansweredStyle;
+                }
+            }
+
+            
+
+            echo  "<form action='' method='post'>";
+            echo  "<input type='submit' value=" . $current_cnt . " name='questionSwitch' style='" . $buttonStyle . "'>";
+            echo  "</form>";
+        }
+    }
+
+    function evaluateTestResult( $questions, $responses)
+    {
+        $rightcnt = 0;
+        $wrongcnt = 0;
+
+        for ($i = 0; $i < count($questions); $i++) {
+
+            if (!isset($responses[$i])) {
+                $wrongcnt++;
+            } else {
+
+                if ($questions[$i]["Q_Answer"] != $responses[$i]) {
+                    $wrongcnt++;
+                } else {
+                    $rightcnt++;
+                }
+            }
+        }
+
+        return array("Right" => $rightcnt, "Wrong" => $wrongcnt );
+    }
+
+
+    //User login and logout
 
     function login($id)
     {
@@ -163,9 +246,4 @@ class LogicHandler
         $_SESSION["token"] = uniqid();
     }
 
-    function getBehavioralCategories2()
-    {
-        $behavioral = $this->dbhandler->getCategories("Behavioral");
-        return array_splice($behavioral, 0, 4);
-    }
 }

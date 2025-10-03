@@ -6,10 +6,8 @@ $logichandler -> LoginGuard();
 
 if(isset($_POST["questionSwitch"]))
 {
-
   $_SESSION["Current"] = $_POST["questionSwitch"] - 1;
   unset($_POST["questionSwitch"]);
-
 }
 
 if(isset($_POST["responseSubmission"]))
@@ -17,8 +15,6 @@ if(isset($_POST["responseSubmission"]))
   $_SESSION["Responses"][$_SESSION["Current"]] = $_POST["questionResponse"];
   unset($_POST["responseSubmission"]);
 }
-
-var_dump($_SESSION["Responses"]);
 
 ?>
 <!DOCTYPE html>
@@ -34,26 +30,7 @@ var_dump($_SESSION["Responses"]);
 
 <?php
 
-$cnt = count($_SESSION["Questions"]);
-
-$basicstyle = "margin: 2px;";
-$selectedstyle = $basicstyle." background-color: red;";
-
-for($i=0; $i<$cnt; $i++)
-{
-  $current_cnt = $i+1;
-
-  echo  "<form action='' method='post'>";
-  if($_SESSION["Current"] == $i )
-  {
-    echo  "<input type='submit' value=".$current_cnt." name='questionSwitch' style='".$selectedstyle."'>";
-  }
-  else
-  {
-     echo  "<input type='submit' value=".$current_cnt." name='questionSwitch' style='".$basicstyle."'>";
-  }
-  echo  "</form>";
-}
+$logichandler -> renderTestNavButtons($_SESSION["Questions"], $_SESSION["Responses"]);
 
 ?>
 

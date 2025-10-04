@@ -4,7 +4,12 @@ require_once("LogicHandler.php");
 $logichandler = new LogicHandler();
 $logichandler->LoginGuard();
 
-$result = $logichandler ->evaluateTestResult($_SESSION["Questions"], $_SESSION["Responses"]);
+$candidate = new Candidate($_SESSION["Candidate"]["Can_ID"], $_SESSION["Candidate"]["Can_Name"], $_SESSION["Candidate"]["Can_Surname"]);
+
+$result = $logichandler ->evaluateTestResult($logichandler -> questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
+$logichandler -> recordTest($result, $candidate, $_SESSION["Level"]);
+$logichandler -> recordResponses($logichandler->getLatestTestID(), $logichandler -> questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"] );
+
 ?>
 
 <!DOCTYPE html>

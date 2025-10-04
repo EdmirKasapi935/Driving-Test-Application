@@ -1,5 +1,7 @@
 <?php
 require_once("DBHandler.php");
+require_once("Models/Candidate.php");
+require_once("Models/Question.php");
 class LogicHandler
 {
 
@@ -10,9 +12,7 @@ class LogicHandler
         $this->dbhandler = new DBHandler();
     }
 
-
     //User registration
-
     function registerCanidate()
     {
         $clear_name = filter_input(INPUT_POST, "inputName", FILTER_SANITIZE_SPECIAL_CHARS);
@@ -128,6 +128,26 @@ class LogicHandler
         return array_splice($shared, 0, 3);
     }
 
+    function questionsToObject($questions)
+    {
+        $cnt = count($questions);
+        $obj_q = array();
+
+        for($i=0; $i<$cnt; $i++)
+        {
+           $obj_q[$i] = new Question($questions[$i]["Q_ID"], $questions[$i]["Q_String"], $questions[$i]["Q_ID"]);
+        }
+
+        return $obj_q;
+
+    }
+
+    function questionToObject($question)
+    {
+        $question_obj = new Question($question["Q_ID"], $question["Q_String"], $question["Q_Answer"]); 
+        return $question_obj;    
+    }
+
     //Test preparation and evaluation
     function prepareTest($examReq)
     {
@@ -147,14 +167,27 @@ class LogicHandler
     }
 
     $_SESSION["Current"] = 0;
+    $_SESSION["Level"] = $examReq; 
 
     unset($_POST["TypeSubmission"]);
     unset($_POST["ExamType"]);
 
-    $_SESSION["Responses"] = array(); //empty array;
+    $_SESSION["Responses"] = $this -> activateResponses(count($_SESSION["Questions"]));
     }
 
-    function renderTestNavButtons($questions, $responses)
+    private function activateResponses($len)
+    {
+        $res = array();
+
+        for($i=0; $i<$len; $i++)
+        {
+            $res[$i] = "N/A";
+        }
+
+        return $res;
+    }
+
+    function renderTestNavButtons($questions, $responses, $currentBtn)
     {
         $cnt = count($questions);
 
@@ -163,22 +196,19 @@ class LogicHandler
         $currentstyle = $basicStyle." background-color: #c383faff;";
         $unansweredStyle = $basicStyle."background-color:  #fb6e6eff;";
         $answeredStyle = $basicStyle."background-color: #98FF98;";
-
        
         for($i = 0; $i < $cnt; $i++) {
             $current_cnt = $i + 1;
 
-            if ($_SESSION["Current"] == $i) {
+            if ($currentBtn == $i) {
                $buttonStyle = $currentstyle;
             } else {
-                if (array_key_exists($i, $responses)) {
+                if ($responses[$i] != "N/A" ) {
                     $buttonStyle = $answeredStyle;
                 } else {
                     $buttonStyle = $unansweredStyle;
                 }
             }
-
-            
 
             echo  "<form action='' method='post'>";
             echo  "<input type='submit' value=" . $current_cnt . " name='questionSwitch' style='" . $buttonStyle . "'>";
@@ -193,19 +223,47 @@ class LogicHandler
 
         for ($i = 0; $i < count($questions); $i++) {
 
-            if (!isset($responses[$i])) {
+            if ($questions[$i]->getAnswer() != $responses[$i]) {
                 $wrongcnt++;
             } else {
-
-                if ($questions[$i]["Q_Answer"] != $responses[$i]) {
-                    $wrongcnt++;
-                } else {
-                    $rightcnt++;
-                }
+                $rightcnt++;
             }
         }
 
         return array("Right" => $rightcnt, "Wrong" => $wrongcnt );
+    }
+
+    
+    function recordTest($score, $candidate, $level)
+    {
+        $status = "";
+
+        if ($score["Wrong"] > 4) {
+            $status = "FAILED";
+        } else {
+            $status = "PASSED";
+        } 
+
+        $testData = array( "Score" => $score["Right"], "Status" => $status, "Level" => $level, "Candidate" => $candidate -> getID() );
+        $this -> dbhandler -> recordTest($testData);
+
+    }
+
+    function recordResponses($testID, $questions, $responses)
+    {
+        $responseData= "";
+
+         for ($i = 0; $i < count($questions); $i++) {
+
+            $responseData = array("Alternative" => $responses[$i], "OrderNo" => $i, "Test" => $testID, "Question" => $questions[$i] -> getID());
+            $this -> dbhandler -> recordResponse($responseData);
+        }
+    }
+
+    function getLatestTestID()
+    {
+        $test = $this -> dbhandler -> getLatestTest();
+        return $test["T_ID"]; 
     }
 
 
@@ -213,8 +271,7 @@ class LogicHandler
 
     function login($id)
     {
-        $candidate = $this->dbhandler->getCandidateInfo($id);
-        $_SESSION["candidate"] = $candidate["Can_ID"];
+        $_SESSION["Candidate"] = $this->dbhandler->getCandidateInfo($id);
         $this->generateUserKey();
         echo "<script> window.location.replace('mainmenu.php') </script>";
     }

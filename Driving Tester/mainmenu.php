@@ -4,6 +4,8 @@ session_start();
 $logichandler = new LogicHandler();
 $logichandler -> LoginGuard();
 
+
+
 if(isset($_POST["LogoutReq"]))
 {
     unset($_POST["Logout"]);

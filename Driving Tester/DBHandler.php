@@ -81,6 +81,49 @@ class DBHandler{
         return $questions;
     }
 
+    function recordTest($testData)
+    {
+        $score = $testData["Score"];
+        $status = $testData["Status"];
+        $date = date("d/m/Y");
+        $level = $this -> levels[$testData["Level"]];
+        $candidate = $testData["Candidate"];
+
+        $query = "INSERT INTO Tests(T_Score, T_Status, T_Date, L_ID, Can_ID) VALUES ($score, '$status', '$date', $level, $candidate);";
+        $statement = $this -> pdo -> prepare($query);
+        $statement -> execute();
+    }
+
+    function getLatestTest()
+    {
+        $query = "SELECT * FROM Tests ORDER BY T_ID DESC LIMIT 1";
+        $statement = $this -> pdo -> query($query);
+        $test = $statement -> fetch(PDO::FETCH_ASSOC);
+
+        return $test;
+    }
+
+    function getTestInfo($id)
+    {
+        $query = "SELECT * FROM Tests WHERE T_ID=".$id;
+        $statement = $this -> pdo -> query($query);
+        $test = $statement -> fetch(PDO::FETCH_ASSOC);
+
+        return $test;
+    }
+
+    function recordResponse($responseData)
+    {
+        $alternative = $responseData["Alternative"];
+        $orderNo = $responseData["OrderNo"];
+        $test = $responseData["Test"];
+        $question = $responseData["Question"];
+
+        $query = "INSERT INTO Responses(R_Response, R_OrderNo, T_ID, Q_ID) VALUES('$alternative', $orderNo, $test, $question);";
+        $statement = $this -> pdo -> prepare($query);
+        $statement -> execute();
+    }
+
     private function checkNull(...$params)
     {
         foreach($params as $param)

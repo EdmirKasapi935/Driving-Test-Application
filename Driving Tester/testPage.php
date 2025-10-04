@@ -16,6 +16,8 @@ if(isset($_POST["responseSubmission"]))
   unset($_POST["responseSubmission"]);
 }
 
+$question = $logichandler -> questionToObject($_SESSION["Questions"][$_SESSION["Current"]]);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,13 +32,13 @@ if(isset($_POST["responseSubmission"]))
 
 <?php
 
-$logichandler -> renderTestNavButtons($_SESSION["Questions"], $_SESSION["Responses"]);
+$logichandler -> renderTestNavButtons($_SESSION["Questions"], $_SESSION["Responses"], $_SESSION["Current"]);
 
 ?>
 
 </div>
 
-<h2 style="margin-top: 25px"> <?php echo $_SESSION["Questions"][$_SESSION["Current"]]["Q_String"]; ?> </h2>
+<h2 style="margin-top: 25px"> <?php echo $question->getString(); ?> </h2>
 
 
 <form action="" method="post">

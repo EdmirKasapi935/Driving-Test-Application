@@ -124,6 +124,34 @@ class DBHandler{
         $statement -> execute();
     }
 
+    function getUserTests($uID)
+    {
+        $query = "SELECT * FROM Tests WHERE Can_ID=".$uID;
+        $stmnt = $this -> pdo -> query($query);
+        $tests = $stmnt -> fetchAll(PDO::FETCH_ASSOC);
+
+        return $tests;
+    }
+
+    function getTestResponses($tID)
+    {
+        $query = "SELECT * FROM Responses WHERE T_ID=".$tID;
+        $stmnt = $this -> pdo -> query($query);
+        $responses = $stmnt -> fetchAll(PDO::FETCH_ASSOC);
+
+        return $responses;
+    }
+
+    function getQuestion($id)
+    {
+        $query = "SELECT * FROM Questions WHERE Q_ID=".$id;
+        $statement = $this -> pdo -> query($query);
+        $question = $statement -> fetch(PDO::FETCH_ASSOC);
+
+        return $question;
+
+    }
+
     private function checkNull(...$params)
     {
         foreach($params as $param)

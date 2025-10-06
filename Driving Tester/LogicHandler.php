@@ -135,7 +135,7 @@ class LogicHandler
 
         for($i=0; $i<$cnt; $i++)
         {
-           $obj_q[$i] = new Question($questions[$i]["Q_ID"], $questions[$i]["Q_String"], $questions[$i]["Q_ID"]);
+           $obj_q[$i] = new Question($questions[$i]["Q_ID"], $questions[$i]["Q_String"], $questions[$i]["Q_Answer"]);
         }
 
         return $obj_q;
@@ -223,7 +223,7 @@ class LogicHandler
 
         for ($i = 0; $i < count($questions); $i++) {
 
-            if ($questions[$i]->getAnswer() != $responses[$i]) {
+            if($questions[$i]->getAnswer() != $responses[$i]) {
                 $wrongcnt++;
             } else {
                 $rightcnt++;
@@ -233,8 +233,13 @@ class LogicHandler
         return array("Right" => $rightcnt, "Wrong" => $wrongcnt );
     }
 
+    function recordFullTest($score, $candidate, $level, $questions, $responses)
+    {
+        $this -> recordTest($score, $candidate, $level);
+        $this -> recordResponses( $this->getLatestTestID(), $questions, $responses );
+    }
     
-    function recordTest($score, $candidate, $level)
+    private function recordTest($score, $candidate, $level)
     {
         $status = "";
 
@@ -249,7 +254,7 @@ class LogicHandler
 
     }
 
-    function recordResponses($testID, $questions, $responses)
+    private function recordResponses($testID, $questions, $responses)
     {
         $responseData= "";
 
@@ -260,10 +265,68 @@ class LogicHandler
         }
     }
 
-    function getLatestTestID()
+    private function getLatestTestID()
     {
         $test = $this -> dbhandler -> getLatestTest();
         return $test["T_ID"]; 
+    }
+
+    //Test data retrieval
+    function getUserTests($id)
+    {
+        $tests = $this->dbhandler->getUserTests($id);
+        return $tests;
+    }
+
+    function getTestData($id)
+    {
+        $generalData = $this -> dbhandler -> getTestInfo($id);
+        $responses = $this -> dbhandler -> getTestResponses($id);
+        $questions = array();
+        foreach($responses as $response)
+        {
+            $questions[$response["R_OrderNo"]] = $this -> dbhandler -> getQuestion($response["Q_ID"]);
+        }
+
+        return array("GeneralData" => $generalData, "Questions" => $questions, "Responses" => $responses );
+    }
+
+    function renderCandidateTests($id)
+    {
+        $tests = $this->getUserTests($id);
+        $tests = array_reverse($tests);
+
+        $index = count($tests);
+
+        foreach ($tests as $test) {
+            echo "<option value = " . $test["T_ID"] . ">" . $index . ". " . $test["T_Status"] . " -- " . $test["T_Date"] . "</option>";
+            $index--;
+        }
+    }
+
+    function renderTestSheet($id)
+    {
+        $tdata = $this ->getTestData($id);
+        $cnt = 1;
+
+       echo "<section style='text-align:center; font-size:30px;'>";
+            
+            echo "SCORE: " . $tdata['GeneralData']["T_Score"] . " -- STATUS: " . $tdata['GeneralData']["T_Status"];
+            
+        echo "</section>";
+
+
+        foreach ($tdata['Responses'] as $response) {
+            $question = $tdata["Questions"][$response['R_OrderNo']];
+
+            echo "<section style='margin: 5px; border: solid 2px;'>";
+            echo "<h2>".$cnt."." . $question["Q_String"] . "<h3>";
+            echo "<strong>" . "Right Answer: " . $question["Q_Answer"] . " -- Candidate's Response: " . $response["R_Response"] . "</strong>";
+            echo "</section>";
+
+            $cnt++;
+        }
+ 
     }
 
 

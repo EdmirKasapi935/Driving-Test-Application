@@ -4,8 +4,6 @@ session_start();
 $logichandler = new LogicHandler();
 $logichandler -> LoginGuard();
 
-
-
 if(isset($_POST["LogoutReq"]))
 {
     unset($_POST["Logout"]);
@@ -37,6 +35,8 @@ if(isset($_POST["LogoutReq"]))
         <input type="hidden" name="LogoutToken" value="<?php echo $_SESSION["token"]; ?>">
         <input type="submit" name="LogoutReq" value="Log Out">
     </form>
+
+    <a href="candidateTests.php"><button>View Tests</button></a>
 
 </body>
 </html>

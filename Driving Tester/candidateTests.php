@@ -1,13 +1,16 @@
 <?php
-session_start();
 require_once("LogicHandler.php");
+session_start();
 $logichandler = new LogicHandler();
 $logichandler->LoginGuard();
-
 $candidate = new Candidate($_SESSION["Candidate"]["Can_ID"], $_SESSION["Candidate"]["Can_Name"], $_SESSION["Candidate"]["Can_Surname"]);
 
-$result = $logichandler ->evaluateTestResult($logichandler -> questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
-$logichandler ->recordFullTest($result, $candidate, $_SESSION["Level"], $logichandler -> questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"] ) 
+if (isset($_POST["ViewRequest"])) {
+
+    $_SESSION["CurrentTestView"] = $_POST["test"];
+    unset($_POST["ViewRequest"]);
+}
+
 
 ?>
 
@@ -22,13 +25,28 @@ $logichandler ->recordFullTest($result, $candidate, $_SESSION["Level"], $logicha
 
 <body>
 
-    <h2><?php echo "Right Answers: " . $result["Right"]; ?></h2>
-    <h2><?php echo "Wrong Answers: " . $result["Wrong"]; ?></h2>
+    <form action="" method="post">
+
+        <select name="test">
+            <?php
+            $logichandler->renderCandidateTests($candidate->getID());
+            ?>
+            <input type="submit" value="View Test" name="ViewRequest">
+
+        </select>
+
+
+    </form>
 
     <a href="mainmenu.php"><button>Back to Menu</button></a>
+ 
+    <section>
+        <?php
+        $logichandler -> renderTestSheet($_SESSION["CurrentTestView"]);
+        ?>
+    </section>
 
 </body>
-
 
 </html>
 <script>

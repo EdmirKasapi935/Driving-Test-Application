@@ -3,6 +3,7 @@ require_once("LogicHandler.php");
 session_start();
 $logichandler = new LogicHandler();
 $logichandler->LoginGuard();
+$logichandler->testActiveGuard();
 $candidate = new Candidate($_SESSION["Candidate"]["Can_ID"], $_SESSION["Candidate"]["Can_Name"], $_SESSION["Candidate"]["Can_Surname"]);
 
 if (isset($_POST["ViewRequest"])) {
@@ -42,7 +43,11 @@ if (isset($_POST["ViewRequest"])) {
  
     <section>
         <?php
-        $logichandler -> renderTestSheet($_SESSION["CurrentTestView"]);
+
+        if (isset($_SESSION["CurrentTestView"])) {
+            $logichandler->renderTestSheet($_SESSION["CurrentTestView"]);
+        }
+
         ?>
     </section>
 

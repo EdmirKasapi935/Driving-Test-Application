@@ -4,10 +4,19 @@ require_once("LogicHandler.php");
 $logichandler = new LogicHandler();
 $logichandler->LoginGuard();
 
+
 $candidate = new Candidate($_SESSION["Candidate"]["Can_ID"], $_SESSION["Candidate"]["Can_Name"], $_SESSION["Candidate"]["Can_Surname"]);
 
-$result = $logichandler ->evaluateTestResult($logichandler -> questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
-$logichandler ->recordFullTest($result, $candidate, $_SESSION["Level"], $logichandler -> questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"] ) 
+if (!isset($_POST["FinishRequest"])) {
+    echo "<script> window.location.replace('mainmenu.php'); </script>";
+} else {
+    unset($_SESSION["TestActive"]);
+    $result = $logichandler->evaluateTestResult($logichandler->questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
+    $logichandler->recordFullTest($result, $candidate, $_SESSION["Level"], $logichandler->questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
+    unset($_POST["FinishRequest"]);
+}
+
+$logichandler->testActiveGuard();
 
 ?>
 

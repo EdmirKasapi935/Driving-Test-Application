@@ -2,6 +2,7 @@
 require_once("DBHandler.php");
 require_once("Models/Candidate.php");
 require_once("Models/Question.php");
+require_once("Models/TestSheet.php");
 class LogicHandler
 {
 
@@ -304,29 +305,60 @@ class LogicHandler
         }
     }
 
+    function prepareTestSheet($tdata)
+    {
+        $testSheet = new TestSheet();
+        $testSheet->setDate($tdata["GeneralData"]["T_Date"]);
+        $testSheet->setLevelNum($tdata["GeneralData"]["L_ID"]);
+        $testSheet->setScore($tdata["GeneralData"]["T_Score"]);
+        $testSheet->setStatus($tdata["GeneralData"]["T_Status"]);
+        $testSheet->setQuestions($this->questionsToObject($tdata["Questions"]));
+        $testSheet->setResponses($tdata["Responses"]);
+
+        return $testSheet;
+    }
+
     function renderTestSheet($id)
     {
-        $tdata = $this ->getTestData($id);
+        $tSheet = $this -> prepareTestSheet($this ->getTestData($id));
         $cnt = 1;
 
        echo "<section style='text-align:center; font-size:30px;'>";
             
-            echo "SCORE: " . $tdata['GeneralData']["T_Score"] . " -- STATUS: " . $tdata['GeneralData']["T_Status"];
+            echo "LEVEL: ".$tSheet->getLevel()."  --  SCORE: " . $tSheet->getScore() . " -- STATUS: " . $tSheet -> getStatus();
             
         echo "</section>";
 
+        $responses = $tSheet->getResponses();
+        $questions = $tSheet->getQuestions();
 
-        foreach ($tdata['Responses'] as $response) {
-            $question = $tdata["Questions"][$response['R_OrderNo']];
+        foreach ($responses as $response) {
+            $question = $questions[$response['R_OrderNo']];
 
             echo "<section style='margin: 5px; border: solid 2px;'>";
-            echo "<h2>".$cnt."." . $question["Q_String"] . "<h3>";
-            echo "<strong>" . "Right Answer: " . $question["Q_Answer"] . " -- Candidate's Response: " . $response["R_Response"] . "</strong>";
+            echo "<h2>".$cnt."." . $question -> getString() . "<h3>";
+            echo "<strong>" . "Right Answer: " . $question -> getAnswer() . " -- Your Response: " . $response["R_Response"] . "</strong>";
             echo "</section>";
 
             $cnt++;
         }
  
+    }
+
+    function testActiveGuard()
+    {
+        if(isset($_SESSION["TestActive"]))
+        {
+            echo "<script> window.location.replace('testPage.php'); </script>";
+        }
+    }
+
+    function testInaciveGuard()
+    {
+        if(!isset($_SESSION["TestActive"]))
+        {
+            echo "<script> window.location.replace('mainmenu.php'); </script>";
+        }
     }
 
 

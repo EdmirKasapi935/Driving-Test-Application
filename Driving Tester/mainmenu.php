@@ -3,6 +3,7 @@ require_once("LogicHandler.php");
 session_start();
 $logichandler = new LogicHandler();
 $logichandler -> LoginGuard();
+$logichandler -> testActiveGuard();
 
 if(isset($_POST["LogoutReq"]))
 {

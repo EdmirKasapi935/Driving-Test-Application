@@ -3,6 +3,7 @@ session_start();
 require_once("LogicHandler.php");
 $logichandler = new LogicHandler();
 $logichandler -> LoginGuard();
+$logichandler -> testInaciveGuard();
 
 if(isset($_POST["questionSwitch"]))
 {
@@ -50,7 +51,7 @@ $logichandler -> renderTestNavButtons($_SESSION["Questions"], $_SESSION["Respons
 <body>
 
 <form action="testResult.php" method="post">
-  <input type="submit" value="FinishTest">
+  <input type="submit" value="FinishTest" name="FinishRequest">
 </form>
 
 </body>

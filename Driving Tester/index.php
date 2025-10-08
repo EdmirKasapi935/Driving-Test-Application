@@ -1,17 +1,12 @@
 <?php
 session_start();
-require_once("LogicHandler.php");
-$logichandler = new LogicHandler();
-$logichandler -> LogoutGuard();
+require_once("Handlers/RequestHandler.php");
 
+$requesthandler = new RequestHandler();
+$requesthandler->noCacheGuard();
+$requesthandler->logoutGuard();
 
-
-if(isset($_POST["LoginReq"]))
-{
-    unset($_POST["LoginReq"]);
-    $logichandler -> login($_POST["toLogin"]);
-    
-}
+$requesthandler->handleLoginRequest();
 
 ?>
 
@@ -28,7 +23,7 @@ if(isset($_POST["LoginReq"]))
     <form action="" method="post">
         <select id="cars" name="toLogin">
             <?php
-            $logichandler -> renderCandidateOptions();
+            $requesthandler->renderCandidatesList();
             ?>
         </select>
         <br>
@@ -46,4 +41,12 @@ if(isset($_POST["LoginReq"]))
     if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.href);
     }
+</script>
+<script>
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            // This forces a reload if the page is loaded from the bfcache
+            window.location.reload();
+        }
+    });
 </script>

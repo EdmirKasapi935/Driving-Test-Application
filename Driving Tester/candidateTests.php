@@ -1,17 +1,13 @@
 <?php
-require_once("LogicHandler.php");
 session_start();
-$logichandler = new LogicHandler();
-$logichandler->LoginGuard();
-$logichandler->testActiveGuard();
-$candidate = new Candidate($_SESSION["Candidate"]["Can_ID"], $_SESSION["Candidate"]["Can_Name"], $_SESSION["Candidate"]["Can_Surname"]);
+require_once("Handlers/RequestHandler.php");
 
-if (isset($_POST["ViewRequest"])) {
+$requesthandler = new RequestHandler();
+$requesthandler->noCacheGuard();
+$requesthandler->loginGuard();
+$requesthandler->testActiveGuard();
 
-    $_SESSION["CurrentTestView"] = $_POST["test"];
-    unset($_POST["ViewRequest"]);
-}
-
+$requesthandler->handleViewRequest();
 
 ?>
 
@@ -29,26 +25,16 @@ if (isset($_POST["ViewRequest"])) {
     <form action="" method="post">
 
         <select name="test">
-            <?php
-            $logichandler->renderCandidateTests($candidate->getID());
-            ?>
-            <input type="submit" value="View Test" name="ViewRequest">
-
+            <?php $requesthandler->renderTestsList(); ?>
         </select>
-
+        <input type="submit" value="View Test" name="ViewRequest">
 
     </form>
 
     <a href="mainmenu.php"><button>Back to Menu</button></a>
- 
+
     <section>
-        <?php
-
-        if (isset($_SESSION["CurrentTestView"])) {
-            $logichandler->renderTestSheet($_SESSION["CurrentTestView"]);
-        }
-
-        ?>
+        <?php $requesthandler->renderCurrentTestSheet(); ?>
     </section>
 
 </body>
@@ -58,4 +44,12 @@ if (isset($_POST["ViewRequest"])) {
     if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.href);
     }
+</script>
+<script>
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            // This forces a reload if the page is loaded from the bfcache
+            window.location.reload();
+        }
+    });
 </script>

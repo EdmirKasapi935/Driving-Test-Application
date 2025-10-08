@@ -1,15 +1,14 @@
 <?php
-require_once("LogicHandler.php");
 session_start();
-$logichandler = new LogicHandler();
-$logichandler -> LoginGuard();
-$logichandler -> testActiveGuard();
+require_once("Handlers/RequestHandler.php");
 
-if(isset($_POST["LogoutReq"]))
-{
-    unset($_POST["Logout"]);
-    $logichandler -> logOut($_POST["LogoutToken"]);
-}
+$requesthandler = new RequestHandler();
+$requesthandler->noCacheGuard();
+$requesthandler->loginGuard();
+$requesthandler->testActiveGuard();
+
+$requesthandler->handleLogoutRequest();
+$requesthandler->handleTestGenerationRequest();
 
 ?>
 <!DOCTYPE html>
@@ -22,7 +21,7 @@ if(isset($_POST["LogoutReq"]))
 <body>
     <h1>Main Menu</h1>
 
-    <form action="generateTest.php" method="post">
+    <form action="" method="post">
         <select name="ExamType" id="" required>
             <option value="A">A Category -- Motorcycles & Mopeds</option>
             <option value="B">B Category -- Passenger Cars</option>
@@ -39,10 +38,19 @@ if(isset($_POST["LogoutReq"]))
 
     <a href="candidateTests.php"><button>View Tests</button></a>
 
+
 </body>
 </html>
 <script>
     if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.href);
     }
+</script>
+<script>
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            // This forces a reload if the page is loaded from the bfcache
+            window.location.reload();
+        }
+    });
 </script>

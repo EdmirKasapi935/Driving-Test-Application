@@ -1,22 +1,14 @@
 <?php
 session_start();
-require_once("LogicHandler.php");
-$logichandler = new LogicHandler();
-$logichandler->LoginGuard();
+require_once("Handlers/RequestHandler.php");
 
+$requesthandler = new RequestHandler();
+$requesthandler->noCacheGuard();
+$requesthandler->loginGuard();
 
-$candidate = new Candidate($_SESSION["Candidate"]["Can_ID"], $_SESSION["Candidate"]["Can_Name"], $_SESSION["Candidate"]["Can_Surname"]);
+$result = $requesthandler->handleTestFinishRequest();
 
-if (!isset($_POST["FinishRequest"])) {
-    echo "<script> window.location.replace('mainmenu.php'); </script>";
-} else {
-    unset($_SESSION["TestActive"]);
-    $result = $logichandler->evaluateTestResult($logichandler->questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
-    $logichandler->recordFullTest($result, $candidate, $_SESSION["Level"], $logichandler->questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
-    unset($_POST["FinishRequest"]);
-}
-
-$logichandler->testActiveGuard();
+$requesthandler->testActiveGuard(); //in case the finishRequest gets manipulated
 
 ?>
 
@@ -44,4 +36,12 @@ $logichandler->testActiveGuard();
     if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.href);
     }
+</script>
+<script>
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            // This forces a reload if the page is loaded from the bfcache
+            window.location.reload();
+        }
+    });
 </script>

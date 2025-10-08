@@ -1,23 +1,15 @@
 <?php
 session_start();
-require_once("LogicHandler.php");
-$logichandler = new LogicHandler();
-$logichandler -> LoginGuard();
-$logichandler -> testInaciveGuard();
+require_once("Handlers/RequestHandler.php");
 
-if(isset($_POST["questionSwitch"]))
-{
-  $_SESSION["Current"] = $_POST["questionSwitch"] - 1;
-  unset($_POST["questionSwitch"]);
-}
+$requesthandler = new RequestHandler();
+$requesthandler->loginGuard();
+$requesthandler->testInaciveGuard();
 
-if(isset($_POST["responseSubmission"]))
-{
-  $_SESSION["Responses"][$_SESSION["Current"]] = $_POST["questionResponse"];
-  unset($_POST["responseSubmission"]);
-}
+$requesthandler->handleQuestionSwitchRequest();
+$requesthandler->handleResponseSubmission();
 
-$question = $logichandler -> questionToObject($_SESSION["Questions"][$_SESSION["Current"]]);
+$question = $requesthandler->getCurrentQuestion();
 
 ?>
 <!DOCTYPE html>
@@ -33,7 +25,7 @@ $question = $logichandler -> questionToObject($_SESSION["Questions"][$_SESSION["
 
 <?php
 
-$logichandler -> renderTestNavButtons($_SESSION["Questions"], $_SESSION["Responses"], $_SESSION["Current"]);
+$requesthandler->renderQuestionButtons();
 
 ?>
 
@@ -61,4 +53,12 @@ $logichandler -> renderTestNavButtons($_SESSION["Questions"], $_SESSION["Respons
     if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.href);
     }
+</script>
+<script>
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            // This forces a reload if the page is loaded from the bfcache
+            window.location.reload();
+        }
+    });
 </script>

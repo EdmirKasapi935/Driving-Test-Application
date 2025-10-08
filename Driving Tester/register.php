@@ -1,15 +1,12 @@
 <?php
 session_start();
-require_once("LogicHandler.php");
-$logichandler = new LogicHandler();
-$logichandler -> LogoutGuard();
+require_once("Handlers/RequestHandler.php");
 
-if (isset($_POST["RegisterReq"])) {
-   
-    unset($_POST["RegisterReq"]);
-    $logichandler -> registerCanidate();
-    
-}
+$requesthandler = new RequestHandler();
+$requesthandler->noCacheGuard();
+$requesthandler->logoutGuard();
+
+$requesthandler->handleRegisterRequest();
 
 ?>
 
@@ -47,4 +44,12 @@ if (isset($_POST["RegisterReq"])) {
     if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.href);
     }
+</script>
+<script>
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            // This forces a reload if the page is loaded from the bfcache
+            window.location.reload();
+        }
+    });
 </script>

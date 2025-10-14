@@ -8,6 +8,7 @@ class TestSheet{
     private $status;
     private $questions;
     private $responses;
+    private $explanations;
 
 
     function getDate()
@@ -39,12 +40,17 @@ class TestSheet{
     {
         return $this->responses;
     }
-    
+
+    function getExplanations()
+    {
+        return $this->explanations;
+    }
+
     function setDate($newDate)
     {
         $this->date = $newDate;
     }
-
+    
     function setLevel($newLevel)
     {
         $this->level = $newLevel;
@@ -80,6 +86,11 @@ class TestSheet{
     function setResponses($newResponses)
     {
         $this->responses = $newResponses;
+    }
+
+    function setExplanations($newExplanations)
+    {
+        $this->explanations = $newExplanations;
     }
      
 }

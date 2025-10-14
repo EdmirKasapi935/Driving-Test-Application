@@ -237,11 +237,13 @@ class TestHandler
         $generalData = $this->dbhandler->getTestInfo($id);
         $responses = $this->dbhandler->getTestResponses($id);
         $questions = array();
+        $explanations = array();
         foreach ($responses as $response) {
             $questions[$response["R_OrderNo"]] = $this->dbhandler->getQuestion($response["Q_ID"]);
+            $explanations[$response["R_OrderNo"]] = $this->dbhandler->getExplanation($response["Q_ID"]);
         }
 
-        return array("GeneralData" => $generalData, "Questions" => $questions, "Responses" => $responses);
+        return array("GeneralData" => $generalData, "Questions" => $questions, "Responses" => $responses, "Explanations" => $explanations );
     }
 
     
@@ -255,6 +257,7 @@ class TestHandler
         $testSheet->setStatus($tdata["GeneralData"]["T_Status"]);
         $testSheet->setQuestions($this->questionsToObject($tdata["Questions"]));
         $testSheet->setResponses($tdata["Responses"]);
+        $testSheet->setExplanations($tdata["Explanations"]);
 
         return $testSheet;
     }
@@ -314,13 +317,23 @@ class TestHandler
 
         $responses = $tSheet->getResponses();
         $questions = $tSheet->getQuestions();
+        $explanations = $tSheet->getExplanations();
 
         foreach ($responses as $response) {
             $question = $questions[$response['R_OrderNo']];
+            
 
             echo "<section style='margin: 5px; border: solid 2px;'>";
             echo "<h2>" . $cnt . "." . $question->getString() . "<h3>";
             echo "<strong>" . "Right Answer: " . $question->getAnswer() . " -- Your Response: " . $response["R_Response"] . "</strong>";
+
+            if($question->getAnswer() != $response["R_Response"])
+            {
+                $explanation = $explanations[$response['R_OrderNo']]['E_Explanation'];
+                echo "<br>";
+                echo "<strong>".$explanation."</strong>";
+            }
+
             echo "</section>";
 
             $cnt++;

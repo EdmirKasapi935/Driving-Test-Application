@@ -152,6 +152,15 @@ class DBHandler{
 
     }
 
+    function getExplanation($id)
+    {
+        $query = "SELECT * FROM Explanations WHERE E_ID=".$id;
+        $stmnt = $this -> pdo -> query($query);
+        $explanation = $stmnt -> fetch(PDO::FETCH_ASSOC);
+
+        return $explanation;
+    }
+
     private function checkNull(...$params)
     {
         foreach($params as $param)
@@ -165,7 +174,6 @@ class DBHandler{
         return false;
     }
 
-    
 
 }
 

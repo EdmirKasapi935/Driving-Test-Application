@@ -56,7 +56,7 @@ class TestHandler
         foreach ($categories as $category) {
             $q = $this->dbhandler->getCategoryQuestions($category["C_ID"]);
             shuffle($q);
-            $selected_q = array_splice($q, 0, 5);
+            $selected_q = array_splice($q, 0, 6);
             $questions_list = array_merge($questions_list, $selected_q);
         }
 
@@ -198,11 +198,25 @@ class TestHandler
     {
         $status = "";
 
-        if ($score["Wrong"] > 4) {
-            $status = "FAILED";
+        if ($level == "Behavioral") {
+
+            if ($score["Wrong"] > 3) {
+                $status = "FAILED";
+            } else {
+                $status = "PASSED";
+            }
+
         } else {
-            $status = "PASSED";
+
+            if ($score["Wrong"] > 4) {
+                $status = "FAILED";
+            } else {
+                $status = "PASSED";
+            }
+            
         }
+
+        
 
         $testData = array("Score" => $score["Right"], "Status" => $status, "Level" => $level, "Candidate" => $candidate->getID());
         $this->dbhandler->recordTest($testData);
@@ -266,27 +280,26 @@ class TestHandler
     {
         $cnt = count($questions);
 
-        $buttonStyle = "";
-        $basicStyle = "margin: 2px;";
-        $currentstyle = $basicStyle . " background-color: #c383faff;";
-        $unansweredStyle = $basicStyle . "background-color:  #fb6e6eff;";
-        $answeredStyle = $basicStyle . "background-color: #98FF98;";
+        $buttonClass = "";
+        $answeredClass = "answered-question-button";
+        $unansweredClass = "unanswered-question-button";
+        $currentClass = "current-question-button";
 
         for ($i = 0; $i < $cnt; $i++) {
             $current_cnt = $i + 1;
 
             if ($currentBtn == $i) {
-                $buttonStyle = $currentstyle;
+                $buttonClass = $currentClass;
             } else {
                 if ($responses[$i] != "N/A") {
-                    $buttonStyle = $answeredStyle;
+                    $buttonClass = $answeredClass;
                 } else {
-                    $buttonStyle = $unansweredStyle;
+                    $buttonClass = $unansweredClass;
                 }
             }
 
             echo  "<form action='' method='post'>";
-            echo  "<input type='submit' value=" . $current_cnt . " name='questionSwitch' style='" . $buttonStyle . "'>";
+            echo  "<input type='submit' value='$current_cnt' name='questionSwitch' class='$buttonClass'>";
             echo  "</form>";
         }
     }
@@ -324,6 +337,13 @@ class TestHandler
             
 
             echo "<section style='margin: 5px; border: solid 2px;'>";
+
+            if($this->getImageforQuestion($question->getID()) != null )
+            {
+              $image = $this->getImageforQuestion($question->getID());
+              echo "<img src='Images/".$image["I_Name"]."' width='50px' height='50px'  />";
+            }
+
             echo "<h2>" . $cnt . "." . $question->getString() . "<h3>";
             echo "<strong>" . "Right Answer: " . $question->getAnswer() . " -- Your Response: " . $response["R_Response"] . "</strong>";
 
@@ -338,5 +358,10 @@ class TestHandler
 
             $cnt++;
         }
+    }
+
+    function getImageforQuestion($id)
+    {
+        return $this->dbhandler->getImage($id);
     }
 }

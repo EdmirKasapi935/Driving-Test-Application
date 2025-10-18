@@ -161,6 +161,15 @@ class DBHandler{
         return $explanation;
     }
 
+    function getImage($id)
+    {
+        $query = "SELECT * FROM Images Where Q_ID=".$id;
+        $stmnt = $this->pdo->query($query);
+        $image = $stmnt -> fetch(PDO::FETCH_ASSOC);
+
+        return $image;
+    }
+
     private function checkNull(...$params)
     {
         foreach($params as $param)

@@ -99,6 +99,11 @@ class RequestHandler
             $result = $this->testhandler->evaluateTestResult($this->testhandler->questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
             $this->testhandler->recordFullTest($result, $candidate, $_SESSION["Level"], $this->testhandler->questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
 
+            unset($_SESSION["Questions"]);
+            unset($_SESSION["Responses"]);
+            unset($_SESSION["Level"]);
+            unset($_SESSION["Current"]);
+
             return $result;
         }
     }
@@ -182,4 +187,14 @@ class RequestHandler
             $this->testhandler->renderTestSheet($_SESSION["CurrentTestView"]);
         }
     }
+
+    function renderImageForTest($id)
+    {
+        $image = $this->testhandler->getImageforQuestion($id);
+        if($image != null)
+            {
+              echo "<img src='Images/".$image["I_Name"]."' class='test-image' />";
+            }
+    }
+
 }

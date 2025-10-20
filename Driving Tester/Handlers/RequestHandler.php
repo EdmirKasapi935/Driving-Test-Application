@@ -97,7 +97,7 @@ class RequestHandler
             $candidate = new Candidate($_SESSION["Candidate"]["Can_ID"], $_SESSION["Candidate"]["Can_Name"], $_SESSION["Candidate"]["Can_Surname"]);
 
             $result = $this->testhandler->evaluateTestResult($this->testhandler->questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
-            $this->testhandler->recordFullTest($result, $candidate, $_SESSION["Level"], $this->testhandler->questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
+            $result["Status"] = $this->testhandler->recordFullTest($result, $candidate, $_SESSION["Level"], $this->testhandler->questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
 
             unset($_SESSION["Questions"]);
             unset($_SESSION["Responses"]);
@@ -114,6 +114,17 @@ class RequestHandler
 
             $_SESSION["CurrentTestView"] = $_POST["test"];
             unset($_POST["ViewRequest"]);
+        }
+    }
+
+    function handleGetToTestRequest()
+    {
+        if(isset($_POST["GetToTestRequest"]))
+        {
+            $candidate = $this->getCurrentCandidate();
+            $_SESSION["CurrentTestView"] = $this -> testhandler -> getLatestTestID($candidate->getID() );
+
+            unset($_POST["GetToTestRequest"]);
         }
     }
 
@@ -191,10 +202,17 @@ class RequestHandler
     function renderImageForTest($id)
     {
         $image = $this->testhandler->getImageforQuestion($id);
+        
         if($image != null)
-            {
-              echo "<img src='Images/".$image["I_Name"]."' class='test-image' />";
-            }
+        {
+            $picture = $image["I_Name"];
+        }
+        else
+        {
+            $picture = "no-image.png";
+        }
+    
+        echo "<img src='Images/".$picture."' class='test-image' />";
     }
 
 }

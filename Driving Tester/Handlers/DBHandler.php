@@ -94,9 +94,9 @@ class DBHandler{
         $statement -> execute();
     }
 
-    function getLatestTest()
+    function getLatestTest($id)
     {
-        $query = "SELECT * FROM Tests ORDER BY T_ID DESC LIMIT 1";
+        $query = "SELECT * FROM Tests WHERE Can_ID=$id ORDER BY T_ID DESC LIMIT 1";
         $statement = $this -> pdo -> query($query);
         $test = $statement -> fetch(PDO::FETCH_ASSOC);
 
@@ -154,7 +154,7 @@ class DBHandler{
 
     function getExplanation($id)
     {
-        $query = "SELECT * FROM Explanations WHERE E_ID=".$id;
+        $query = "SELECT * FROM Explanations WHERE Q_ID=".$id;
         $stmnt = $this -> pdo -> query($query);
         $explanation = $stmnt -> fetch(PDO::FETCH_ASSOC);
 

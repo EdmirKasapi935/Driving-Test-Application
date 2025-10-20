@@ -20,7 +20,7 @@ $requesthandler->handleLoginRequest();
     <title>Driving Tester - Login</title>
 </head>
 
-<body>
+<body class="page-background" style="background-image: url(Wallpapers/WP1.jpeg);">
 
     <h1 class="page-title">Welcome to the driving tester!</h1>
     <h2 class="page-subtitle"> Select your name below </h2>

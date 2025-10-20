@@ -21,13 +21,13 @@ $requesthandler->handleRegisterRequest();
     <title>Driving Tester - Register</title>
 </head>
 
-<body>
+<body class="page-background" style="background-image: url(Wallpapers/WP1.jpeg);">
     <h1 class="page-title">Register Page</h1>
     <h2 class="page-subtitle"> Please fill the form below properly to register </h2>
 
     <section class="register-form">
         <form action="" method="post">
-            <div class="form-group" style="margin-top: 30px;">
+            <div class="form-group" style="margin-top: 10px;">
                  <label for="inputName" class="form-label">Name: </label>
                  <input type="text" name="inputName" id="inputName" class="form-input" required>
             </div>
@@ -40,7 +40,7 @@ $requesthandler->handleRegisterRequest();
             <input type="submit" value="Register" class="main-form-button" name="RegisterReq">
 
         </form>
-        <a href="/index.php"><button class="normal-button">Main menu</button></a>
+        <a href="/index.php"><button class="normal-button">Log In Page</button></a>
 
     </section>
 

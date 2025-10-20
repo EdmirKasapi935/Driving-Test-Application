@@ -22,7 +22,7 @@ $question = $requesthandler->getCurrentQuestion();
     <title>Driving Tester - Test</title>
 </head>
 
-<body>
+<body class="page-background" style="background: linear-gradient(rgba(85, 139, 245, 1), rgba(58, 86, 142, 1));">
 
     <nav class="button-nav-section">
 
@@ -43,7 +43,7 @@ $question = $requesthandler->getCurrentQuestion();
             ?>
         </section>
 
-        <section style="display: flex; flex-direction: column;">
+        <section class="question-section">
 
             <h2 style="margin-top: 25px" class="question-text"> <?php echo $question->getString(); ?> </h2>
 
@@ -63,7 +63,7 @@ $question = $requesthandler->getCurrentQuestion();
             </form>
 
             <form action="testResult.php" method="post">
-                <input type="submit" value="Finish Test" name="FinishRequest" class="danger-button">
+                <input type="submit" value="Finish Test" name="FinishRequest" class="danger-button"  onclick="return confirm('Are you sure you want to finish the test?')">
             </form>
 
         </section>

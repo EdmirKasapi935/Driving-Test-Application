@@ -190,8 +190,10 @@ class TestHandler
 
     function recordFullTest($score, $candidate, $level, $questions, $responses)
     {
-        $this->recordTest($score, $candidate, $level);
-        $this->recordResponses($this->getLatestTestID(), $questions, $responses);
+        $status = $this->recordTest($score, $candidate, $level);
+        $this->recordResponses($this->getLatestTestID($candidate->getID()), $questions, $responses);
+
+        return $status;
     }
 
     private function recordTest($score, $candidate, $level)
@@ -216,10 +218,9 @@ class TestHandler
             
         }
 
-        
-
         $testData = array("Score" => $score["Right"], "Status" => $status, "Level" => $level, "Candidate" => $candidate->getID());
         $this->dbhandler->recordTest($testData);
+        return $status;
     }
 
     private function recordResponses($testID, $questions, $responses)
@@ -233,9 +234,9 @@ class TestHandler
         }
     }
 
-    private function getLatestTestID()
+    function getLatestTestID($id)
     {
-        $test = $this->dbhandler->getLatestTest();
+        $test = $this->dbhandler->getLatestTest($id);
         return $test["T_ID"];
     }
 
@@ -299,7 +300,7 @@ class TestHandler
             }
 
             echo  "<form action='' method='post'>";
-            echo  "<input type='submit' value='$current_cnt' name='questionSwitch' class='$buttonClass'>";
+            echo  "<input type='submit' value='$current_cnt' name='questionSwitch' class='question-button $buttonClass'>";
             echo  "</form>";
         }
     }
@@ -311,8 +312,17 @@ class TestHandler
 
         $index = count($tests);
 
+
         foreach ($tests as $test) {
-            echo "<option value = " . $test["T_ID"] . ">" . $index . ". " . $test["T_Status"] . " -- " . $test["T_Date"] . "</option>";
+
+            $selected = "";
+
+            if($test['T_ID'] == $_SESSION["CurrentTestView"])
+            {
+                $selected = "selected";
+            }
+
+            echo "<option value = " . $test["T_ID"] . " $selected >" . $index . ". " . $test["T_Status"] . " -- " . $test["T_Date"] . "</option>";
             $index--;
         }
     }
@@ -322,9 +332,9 @@ class TestHandler
         $tSheet = $this->prepareTestSheet($this->getTestData($id));
         $cnt = 1;
 
-        echo "<section style='text-align:center; font-size:30px;'>";
+        echo "<section class='sheet-title'>";
 
-        echo "LEVEL: " . $tSheet->getLevel() . "  --  SCORE: " . $tSheet->getScore() . " -- STATUS: " . $tSheet->getStatus();
+        echo "CATEGORY: " . $tSheet->getLevel() . "  --  SCORE: " . $tSheet->getScore() . " -- STATUS: " . $tSheet->getStatus();
 
         echo "</section>";
 
@@ -336,23 +346,28 @@ class TestHandler
             $question = $questions[$response['R_OrderNo']];
             
 
-            echo "<section style='margin: 5px; border: solid 2px;'>";
+            echo "<section class='sheet-section'>";
 
+            echo "<section class='sheet-image-section'>";
             if($this->getImageforQuestion($question->getID()) != null )
             {
               $image = $this->getImageforQuestion($question->getID());
-              echo "<img src='Images/".$image["I_Name"]."' width='50px' height='50px'  />";
+              echo "<img src='Images/".$image["I_Name"]."' class='test-image' />";
             }
+            echo "</section>";
 
-            echo "<h2>" . $cnt . "." . $question->getString() . "<h3>";
+            
+            echo "<section style=''>";
+            echo "<h2 class='sheet-question'>" . $cnt . "." . $question->getString() . "<h3>";
             echo "<strong>" . "Right Answer: " . $question->getAnswer() . " -- Your Response: " . $response["R_Response"] . "</strong>";
 
             if($question->getAnswer() != $response["R_Response"])
             {
                 $explanation = $explanations[$response['R_OrderNo']]['E_Explanation'];
                 echo "<br>";
-                echo "<strong>".$explanation."</strong>";
+                echo "<strong class='sheet-explanation'>".$explanation."</strong>";
             }
+            echo "</section>";
 
             echo "</section>";
 

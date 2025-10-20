@@ -10,6 +10,8 @@ $requesthandler->testActiveGuard();
 $requesthandler->handleLogoutRequest();
 $requesthandler->handleTestGenerationRequest();
 
+$candidate = $requesthandler->getCurrentCandidate();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,11 +20,12 @@ $requesthandler->handleTestGenerationRequest();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+    <title>Driving Tester - Main menu</title>
 </head>
 
-<body>
+<body class="page-background" style="background-image: url(Wallpapers/WP4.jpeg);">
     <h1 class="page-title">Main Menu</h1>
+    <h2 class="page-subtitle"> Welcome, <?php echo $candidate->getName() ?></h2>
 
     <section class="menu-test-form-section">
 

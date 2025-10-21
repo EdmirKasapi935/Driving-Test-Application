@@ -214,5 +214,30 @@ class RequestHandler
     
         echo "<img src='Images/".$picture."' class='test-image' />";
     }
+    
+    function renderBanner(){
+        
+        if($_SERVER['REQUEST_METHOD'] === 'POST')
+        {
+
+            if(isset($_SESSION["NullFieldError"])){
+            echo "<div class='banner banner-error'> <strong class='banner-text'> Please fill the fields properly. </strong> </div>";
+            unset($_SESSION["NullFieldError"]);
+            }
+            else if(isset($_SESSION["RegistrationError"]))
+            {
+            echo "<div class='banner banner-error'> <strong class='banner-text'> There was an error while registering in the database </strong> </div>";
+            unset($_SESSION["RegistrationError"]);
+            }
+            else if(isset($_SESSION["RegistrationSuccess"]))
+            {
+            echo "<div class='banner banner-success'> <strong class='banner-text'> You have been registered successfully </strong> </div>";
+            unset($_SESSION["RegistrationSuccess"]);
+            }
+
+        }
+             
+    }
+
 
 }

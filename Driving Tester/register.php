@@ -44,6 +44,11 @@ $requesthandler->handleRegisterRequest();
 
     </section>
 
+    <?php
+
+    $requesthandler->renderBanner();
+
+    ?>
 
 
 </body>
@@ -55,7 +60,8 @@ $requesthandler->handleRegisterRequest();
         window.history.replaceState(null, null, window.location.href);
     }
 </script>
-<script>
+<script>   
+
     window.addEventListener('pageshow', function(event) {
         if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
             // This forces a reload if the page is loaded from the bfcache

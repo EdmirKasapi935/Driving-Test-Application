@@ -20,7 +20,7 @@ class DBHandler{
     {
         if($this -> checkNull($name, $surname) == true)
         {
-          echo "<script> alert('Please fill the fields properly!') </script>";
+          $_SESSION["NullFieldError"] = true;
           return;
         }
 
@@ -34,11 +34,11 @@ class DBHandler{
 
         if($success)
         {
-            echo "<script> alert('Registration successful') </script>";
+            $_SESSION["RegistrationSuccess"] = true;;
         }
         else
         {
-            echo "<script> alert('Error') </script>";
+            $_SESSION["RegistrationError"] = true;
         }
         
     }

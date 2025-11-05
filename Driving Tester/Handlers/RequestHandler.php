@@ -27,6 +27,21 @@ class RequestHandler
         return $question;
     }
 
+    function transferQuestions()
+    {
+        $questions = $this -> testhandler -> questionsToObject($_SESSION["Questions"]);
+        $q_list = array();
+        $index = 0;
+
+        foreach($questions as $question)
+        {
+          $q_list[$index] = $question -> getString();
+          $index++;
+        }
+
+        return $q_list;
+    }
+
     //Request handling
 
     function handleLoginRequest()
@@ -82,7 +97,7 @@ class RequestHandler
 
     function handleTestFinishRequest()
     {
-        if (!isset($_POST["FinishRequest"])) {
+        if (!isset($_POST["FinishRequest"]) || isset($_POST["FinishRequestTwo"])) {
 
             if (isset($_SESSION["TestActive"])) {
                 header("Location: testpage.php");
@@ -94,10 +109,12 @@ class RequestHandler
         } else {
             unset($_SESSION["TestActive"]);
 
+            $responses = json_decode($_POST["testResponses"], true);
+
             $candidate = new Candidate($_SESSION["Candidate"]["Can_ID"], $_SESSION["Candidate"]["Can_Name"], $_SESSION["Candidate"]["Can_Surname"]);
 
-            $result = $this->testhandler->evaluateTestResult($this->testhandler->questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
-            $result["Status"] = $this->testhandler->recordFullTest($result, $candidate, $_SESSION["Level"], $this->testhandler->questionsToObject($_SESSION["Questions"]), $_SESSION["Responses"]);
+            $result = $this->testhandler->evaluateTestResult($this->testhandler->questionsToObject($_SESSION["Questions"]), $responses);
+            $result["Status"] = $this->testhandler->recordFullTest($result, $candidate, $_SESSION["Level"], $this->testhandler->questionsToObject($_SESSION["Questions"]), $responses);
 
             unset($_SESSION["Questions"]);
             unset($_SESSION["Responses"]);
@@ -199,20 +216,26 @@ class RequestHandler
         }
     }
 
-    function renderImageForTest($id)
+    function perpareImagesForTest()
     {
-        $image = $this->testhandler->getImageforQuestion($id);
-        
-        if($image != null)
-        {
-            $picture = $image["I_Name"];
+        $questions = $this->testhandler->questionsToObject($_SESSION["Questions"]);
+        $images = array();
+        $index = 0;
+
+        foreach ($questions as $question) {
+            $image = $this->testhandler->getImageforQuestion($question->getID());
+
+            if ($image != null) {
+                $picture = $image["I_Name"];
+            } else {
+                $picture = "no-image.png";
+            }
+
+            $images[$index] = $picture;
+            $index++;
         }
-        else
-        {
-            $picture = "no-image.png";
-        }
-    
-        echo "<img src='Images/".$picture."' class='test-image' />";
+
+        return $images;
     }
     
     function renderBanner(){

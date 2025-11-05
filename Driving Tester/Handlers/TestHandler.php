@@ -131,6 +131,8 @@ class TestHandler
         return $question_obj;
     }
 
+    
+
     //Test preparation and evaluation
     function prepareTest($examReq)
     {
@@ -287,21 +289,8 @@ class TestHandler
         $currentClass = "current-question-button";
 
         for ($i = 0; $i < $cnt; $i++) {
-            $current_cnt = $i + 1;
 
-            if ($currentBtn == $i) {
-                $buttonClass = $currentClass;
-            } else {
-                if ($responses[$i] != "N/A") {
-                    $buttonClass = $answeredClass;
-                } else {
-                    $buttonClass = $unansweredClass;
-                }
-            }
-
-            echo  "<form action='' method='post'>";
-            echo  "<input type='submit' value='$current_cnt' name='questionSwitch' class='question-button $buttonClass'>";
-            echo  "</form>";
+            echo  "<button id='$i' class='question-button $unansweredClass' onclick='changeQuestion(this.id)'>".($i+1)."</button>";
         }
     }
 

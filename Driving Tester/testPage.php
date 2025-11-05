@@ -6,11 +6,6 @@ $requesthandler = new RequestHandler();
 $requesthandler->loginGuard();
 $requesthandler->testInaciveGuard();
 
-//$requesthandler->handleQuestionSwitchRequest();
-//$requesthandler->handleResponseSubmission();
-
-//question = $requesthandler->getCurrentQuestion();
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -21,11 +21,7 @@ class RequestHandler
         return $candidate;
     }
 
-    function getCurrentQuestion()
-    {
-        $question = $this->testhandler->questionToObject($_SESSION["Questions"][$_SESSION["Current"]]);
-        return $question;
-    }
+    
 
     function transferQuestions()
     {
@@ -79,21 +75,6 @@ class RequestHandler
         }
     }
 
-    function handleQuestionSwitchRequest()
-    {
-        if (isset($_POST["questionSwitch"])) {
-            $_SESSION["Current"] = $_POST["questionSwitch"] - 1;
-            unset($_POST["questionSwitch"]);
-        }
-    }
-
-    function handleResponseSubmission()
-    {
-        if (isset($_POST["responseSubmission"])) {
-            $_SESSION["Responses"][$_SESSION["Current"]] = $_POST["questionResponse"];
-            unset($_POST["responseSubmission"]);
-        }
-    }
 
     function handleTestFinishRequest()
     {
